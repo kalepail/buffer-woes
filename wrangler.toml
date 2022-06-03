@@ -1,0 +1,12 @@
+name = "pages-fullstack"
+main = "worker-site/worker.mjs"
+usage_model = "bundled"
+compatibility_flags = []
+workers_dev = false
+compatibility_date = "2022-06-02"
+
+[build]
+command = "npm run build"
+
+[site]
+bucket = ".svelte-kit/assets"
