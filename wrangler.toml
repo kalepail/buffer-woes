@@ -1,8 +1,8 @@
-name = "pages-fullstack"
+name = "buffer-woes"
 main = "worker-site/worker.mjs"
 usage_model = "bundled"
 compatibility_flags = []
-workers_dev = false
+workers_dev = true
 compatibility_date = "2022-06-02"
 
 [build]

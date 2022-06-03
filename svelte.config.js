@@ -1,6 +1,4 @@
-import { Buffer } from 'buffer'
-import { babel } from '@rollup/plugin-babel'
-import commonjs from '@rollup/plugin-commonjs';
+// import { Buffer } from 'buffer'
 import preprocess from 'svelte-preprocess'
 // import adapter from '@sveltejs/adapter-cloudflare'
 import adapter from '@sveltejs/adapter-cloudflare-workers'
@@ -8,47 +6,22 @@ import adapter from '@sveltejs/adapter-cloudflare-workers'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 
-// import nodeResolve from '@rollup/plugin-node-resolve'
-// import nodePolyfills from 'rollup-plugin-polyfill-node'
-import nodePolyfills from 'rollup-plugin-polyfill-node'
+// import nodePolyfills from 'rollup-plugin-polyfill-node';
 
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import builtins from 'rollup-plugin-node-builtins';
-import globals from 'rollup-plugin-node-globals';
+// import { nodeResolve } from '@rollup/plugin-node-resolve';
+// import builtins from 'rollup-plugin-node-builtins';
 import inject from '@rollup/plugin-inject'
 
 // import stdLibBrowser from 'node-stdlib-browser'
-
 // import plugin from 'node-stdlib-browser/helpers/esbuild/plugin'
 // import stdLibBrowser from 'node-stdlib-browser'
 // import shim from 'node-stdlib-browser/helpers/esbuild/shim'
 
-/** @type {import('@sveltejs/kit').Config} */
-const { default: stdLibBrowser } = await import('node-stdlib-browser')
+// const { default: stdLibBrowser } = await import('node-stdlib-browser')
 
+/** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess:  preprocess({
-    // babel: {
-		// 	plugins: [
-		// 		'lodash',
-		// 		'@babel/plugin-proposal-optional-chaining'
-		// 	],
-    //   presets: [
-    //     [
-    //       '@babel/preset-env',
-    //       {
-    //         loose: true,
-    //         // No need for babel to resolve modules
-    //         modules: false,
-    //         targets: {
-    //           // ! Very important. Target es6+
-    //           esmodules: true,
-    //         },
-    //       },
-    //     ],
-    //   ],
-    // },
-  }),
+	preprocess:  preprocess(),
 	kit: {
 		adapter: adapter(),
 		methodOverride: {
@@ -67,36 +40,31 @@ const config = {
 			// 	},
 			// 	// plugins: [plugin(stdLibBrowser)]
 			// }
-			resolve: {
-				alias: stdLibBrowser
-			},
-			optimizeDeps: {
-				include: ['buffer', 'process'],
-				esbuildOptions: {
-					define: {
-						global: 'globalThis',
-					}
-				}
-			},
-			plugins: [
-				{
-					...inject({
-						// global: [
-						// 	'node-stdlib-browser/helpers/esbuild/shim',
-						// 	'global'
-						// ],
-						process: [
-							'node-stdlib-browser/helpers/esbuild/shim',
-							'process'
-						],
-						Buffer: [
-							'node-stdlib-browser/helpers/esbuild/shim',
-							'Buffer'
-						]
-					}),
-					enforce: 'post'
-				}
-			]
+			// resolve: {
+			// 	alias: stdLibBrowser
+			// },
+			// plugins: [
+				// inject({
+				// 	Buffer: ['buffer-es6', 'Buffer']
+				// })
+				// {
+				// 	...inject({
+				// 		// global: [
+				// 		// 	'node-stdlib-browser/helpers/esbuild/shim',
+				// 		// 	'global'
+				// 		// ],
+				// 		process: [
+				// 			'node-stdlib-browser/helpers/esbuild/shim',
+				// 			'process'
+				// 		],
+				// 		Buffer: [
+				// 			'node-stdlib-browser/helpers/esbuild/shim',
+				// 			'Buffer'
+				// 		]
+				// 	}),
+				// 	enforce: 'post'
+				// }
+			// ],
 
 			// resolve: {
 			// 	alias: stdLibBrowser
@@ -130,9 +98,6 @@ const config = {
 			// 	}
 			// ],
 			// inject: ['./src/lib/buffer.js'],
-			// define: {
-			// 	Test: 'Test'
-			// },
 			// plugins: [
 				// inject({
 				// 	Buffer: ['buffer', 'Buffer']
@@ -170,29 +135,40 @@ const config = {
 			// 			]
 			// 		}
 			// 	},
-			// build: {
-			// 	// commonjsOptions: {
-			// 	// 	include: [/buffer/, /node_modules/]
-			// 	// },
-			// 	// minify: false,
-      //   rollupOptions: {
-			// 		plugins: [
-			// 			// commonjs(),
-			// 			// babel({ 
-			// 			// 	babelHelpers: 'bundled' 
-			// 			// }),
-			// 			// builtins(),
-			// 			// nodeResolve({
-			// 			// 	browser: true,
-			// 			// 	preferBuiltins: true
-			// 			// }),
-			// 			// inject({
-			// 			// 	Buffer: ['buffer', 'Buffer'] // ['buffer-es6', 'Buffer'] // ['buffer', 'Buffer']
-			// 			// }),
-			// 			// globals(),
-			// 		]
-			// 	}
-    	// }
+			optimizeDeps: {
+				// exclude: ['stellar-base', 'buffer-es6'],
+				// include: ['buffer', 'process'],
+				esbuildOptions: {
+					define: {
+						global: 'globalThis',
+					},
+					plugins: [
+						NodeGlobalsPolyfillPlugin({
+							process: true,
+							buffer: true
+						}),
+						NodeModulesPolyfillPlugin()
+					]
+				}
+			},
+			build: {
+				// commonjsOptions: {
+				// 	include: [/buffer/, /node_modules/]
+				// },
+        rollupOptions: {
+					plugins: [
+						inject({
+							Buffer: ['buffer-es6', 'Buffer']
+						}),
+						// builtins(),
+						// nodePolyfills(),
+						// nodeResolve({
+						// 	browser: true,
+						// 	preferBuiltins: false
+						// }),
+					],
+				},
+    	}
 		}
 	}
 }
