@@ -3,8 +3,8 @@ import preprocess from 'svelte-preprocess'
 // import adapter from '@sveltejs/adapter-cloudflare'
 import adapter from '@sveltejs/adapter-cloudflare-workers'
 
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
-import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
+// import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
+// import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 
 // import nodePolyfills from 'rollup-plugin-polyfill-node';
 
@@ -98,13 +98,11 @@ const config = {
 			// 	}
 			// ],
 			// inject: ['./src/lib/buffer.js'],
-			// plugins: [
-				// inject({
-				// 	Buffer: ['buffer', 'Buffer']
-				// 	// Buffer: 'buffer'
-				// }),
-				// nodePolyfills(),
-			// ],
+			plugins: [
+				inject({
+					Buffer: ['buffer-es6', 'Buffer']
+				}),
+			],
 			// resolve: {
 			// 	alias: {
 					// Buffer: ['buffer', 'Buffer'],
@@ -135,40 +133,40 @@ const config = {
 			// 			]
 			// 		}
 			// 	},
-			optimizeDeps: {
+			// optimizeDeps: {
 				// exclude: ['stellar-base', 'buffer-es6'],
 				// include: ['buffer', 'process'],
-				esbuildOptions: {
-					define: {
-						global: 'globalThis',
-					},
-					plugins: [
-						NodeGlobalsPolyfillPlugin({
-							process: true,
-							buffer: true
-						}),
-						NodeModulesPolyfillPlugin()
-					]
-				}
-			},
-			build: {
+				// esbuildOptions: {
+				// 	define: {
+				// 		global: 'globalThis',
+				// 	},
+				// 	plugins: [
+				// 		NodeGlobalsPolyfillPlugin({
+				// 			process: true,
+				// 			buffer: true
+				// 		}),
+				// 		NodeModulesPolyfillPlugin()
+				// 	]
+				// }
+			// },
+			// build: {
 				// commonjsOptions: {
 				// 	include: [/buffer/, /node_modules/]
 				// },
-        rollupOptions: {
-					plugins: [
-						inject({
-							Buffer: ['buffer-es6', 'Buffer']
-						}),
+        // rollupOptions: {
+				// 	plugins: [
+				// 		inject({
+				// 			Buffer: ['buffer-es6', 'Buffer']
+				// 		}),
 						// builtins(),
 						// nodePolyfills(),
 						// nodeResolve({
 						// 	browser: true,
 						// 	preferBuiltins: false
 						// }),
-					],
-				},
-    	}
+					// ],
+				// },
+    	// }
 		}
 	}
 }
